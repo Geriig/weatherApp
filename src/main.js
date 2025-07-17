@@ -7,23 +7,21 @@ const cityName = document.getElementById('city');
 submitButton.addEventListener("click", async () => {
     if(cityName.value.replace(/\s+/g, '') != ""){
         let searchedCity = cityName.value.replace(/\s+/g, '');
-        let searchedCitysGeoLocations = await Geolocations(searchedCity)
-        if(searchedCitysGeoLocations.length != 0){
-            console.log(searchedCitysGeoLocations)
-            console.log(searchedCitysGeoLocations[0].name)
-            
+        let weatherData = await getWeather(searchedCity);
+        if(weatherData.cod == 404){
+            console.error("Nincs ilyen varos!")
         }else{
-            console.log('Nincs ilyen varos!');
+            console.log(weatherData)
+            console.log(weatherData.main.temp);
         }
+        
         
     }else{
         console.error("Ures a varosnev!")
     }
 })
 
-
-
-async function Geolocations(sC){
-    let fetchedData = await fetch(`http://api.openweathermap.org/geo/1.0/direct?q=${sC}&appid=${apiKey}`);
+async function getWeather(sC) {
+    let fetchedData = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${sC}&appid=${apiKey}&units=metric`)
     return fetchedData.json();
 }
